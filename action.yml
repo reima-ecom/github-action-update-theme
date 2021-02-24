@@ -1,5 +1,4 @@
-name: 'Hello World'
-description: 'Greet someone'
+name: 'Update Hugo theme and Forestry frontmatter'
 inputs:
   forestry-source:
     description: 'Source repository (org/repo) of Forestry configuration'
