@@ -1,0 +1,32 @@
+name: 'Hello World'
+description: 'Greet someone'
+inputs:
+  forestry-source:
+    description: 'Source repository (org/repo) of Forestry configuration'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: denolib/setup-deno@v2
+    - uses: peaceiris/actions-hugo@v2
+    - name: Update theme module with go modules
+      run: hugo mod get -u
+    - name: Update theme version in `data/version.yml` file
+      run: |
+        hugo mod graph | sed -nr 's/^.*@(.*)$/version: \1/p' > data/version.yml
+    - name: Update forestry frontmatter from source repo
+      run: |
+        deno run --allow-env --allow-net=api.github.com --allow-read=.forestry --allow-write=.forestry \
+        https://raw.githubusercontent.com/reima-ecom/reima-theme/master/importers/update-forestry-frontmatter/cmd.ts \
+        ${{ inputs.forestry-source }}
+    - name: Commit changes
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .forestry
+        git add data/version.yml
+        git add go.mod
+        git add go.sum
+        git diff --staged --exit-code || git commit -m "Updated theme and frontmatter"
+        git pull
+        git push
