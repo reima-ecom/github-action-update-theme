@@ -7,8 +7,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: denolib/setup-deno@v2
-    - uses: peaceiris/actions-hugo@v2
     - name: Update theme module with go modules
       run: hugo mod get -u
     - name: Update theme version in `data/version.yml` file
