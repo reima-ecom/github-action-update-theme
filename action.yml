@@ -9,14 +9,17 @@ runs:
   steps:
     - name: Update theme module with go modules
       run: hugo mod get -u
+      shell: bash
     - name: Update theme version in `data/version.yml` file
       run: |
         hugo mod graph | sed -nr 's/^.*@(.*)$/version: \1/p' > data/version.yml
+      shell: bash
     - name: Update forestry frontmatter from source repo
       run: |
         deno run --allow-env --allow-net=api.github.com --allow-read=.forestry --allow-write=.forestry \
         https://raw.githubusercontent.com/reima-ecom/reima-theme/master/importers/update-forestry-frontmatter/cmd.ts \
         ${{ inputs.forestry-source }}
+      shell: bash
     - name: Commit changes
       run: |
         git config user.name github-actions
@@ -28,3 +31,4 @@ runs:
         git diff --staged --exit-code || git commit -m "Updated theme and frontmatter"
         git pull
         git push
+      shell: bash
