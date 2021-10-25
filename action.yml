@@ -28,6 +28,6 @@ runs:
         git add go.mod
         git add go.sum
         git diff --staged --exit-code || git commit -m "Updated theme and frontmatter"
-        git pull
+        git pull --ff-only
         git push
       shell: bash
